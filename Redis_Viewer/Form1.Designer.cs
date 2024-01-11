@@ -35,6 +35,8 @@
             MasterPassword = new TextBox();
             label3 = new Label();
             btnConnect = new Button();
+            Output = new RichTextBox();
+            Command = new TextBox();
             SuspendLayout();
             // 
             // label1
@@ -99,11 +101,33 @@
             btnConnect.UseVisualStyleBackColor = true;
             btnConnect.Click += btnConnect_Click;
             // 
+            // Output
+            // 
+            Output.AccessibleRole = AccessibleRole.ScrollBar;
+            Output.AutoWordSelection = true;
+            Output.Location = new Point(12, 143);
+            Output.Name = "Output";
+            Output.Size = new Size(776, 429);
+            Output.TabIndex = 7;
+            Output.Text = "";
+            Output.TextChanged += Output_TextChanged;
+            // 
+            // Command
+            // 
+            Command.Location = new Point(12, 583);
+            Command.Name = "Command";
+            Command.Size = new Size(776, 23);
+            Command.TabIndex = 8;
+            Command.TextChanged += Command_TextChanged;
+            Command.KeyDown += Command_KeyDown;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 618);
+            Controls.Add(Command);
+            Controls.Add(Output);
             Controls.Add(btnConnect);
             Controls.Add(MasterPassword);
             Controls.Add(label3);
@@ -126,5 +150,7 @@
         private TextBox MasterPassword;
         private Label label3;
         private Button btnConnect;
+        private RichTextBox Output;
+        private TextBox Command;
     }
 }
