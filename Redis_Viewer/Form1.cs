@@ -1,19 +1,25 @@
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.Xml;
+using static Hangfire.Storage.JobStorageFeatures;
 
 namespace Redis_Viewer
 {
     public partial class Form1 : Form, IForm1
     {
-       
+
         public ISubscriber Subscriber { get; set; }
+
         public ConnectionMultiplexer Connection
         {
             get; set;
         }
 
         public IDatabase DataBase { get; set; }
+        public string command { get; private set; }
 
         public Form1()
         {
@@ -26,19 +32,30 @@ namespace Redis_Viewer
         {
             try
             {
+                var redisConnectionString = $"{this.Host.Text}:{this.Port.Text}";
+                Dictionary<string, List<string>> Keys = new Dictionary<string, List<string>>();
+
                 Connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
                 {
-                    EndPoints = { { this.Host.Text, int.Parse(this.Port.Text) } },
-                    AbortOnConnectFail = false, // You can set this based on your requirements
-                    Password = this.MasterPassword.Text,                             // other configuration options
-                    ConnectTimeout = 10000, // Set the connection timeout to 10 seconds (adjust as needed)
-                    SyncTimeout = 5000, // Set the synchronous timeout to 5 seconds (adjust as needed)
+                    EndPoints = { { redisConnectionString } },
+                    AbortOnConnectFail = false,
+                    Password = this.MasterPassword.Text,
+                    ConnectTimeout = 10000,
+                    SyncTimeout = 5000,
                     KeepAlive = 500,
                     AllowAdmin = true
                 });
+
                 DataBase = Connection.GetDatabase();
                 Subscriber = Connection.GetSubscriber();
-                Output.Text += $"Connected to Host {this.Host.Text}\n";
+
+                Console.WriteLine($"Connected to Host {redisConnectionString}");
+
+                // Retrieve all keys using the Keys method of IServer
+                var keys = Connection.GetServer(redisConnectionString).Keys();
+
+                this.comboBox1.DataSource = keys.ToList();
+
             }
             catch (Exception ex)
             {
@@ -59,7 +76,7 @@ namespace Redis_Viewer
         {
 
         }
-          private void Command_KeyDown(object sender , KeyEventArgs e)
+        private void Command_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -77,19 +94,19 @@ namespace Redis_Viewer
             return;
         }
 
-        private void Command_TextChanged(object sender,EventArgs e)
+        private void Command_TextChanged(object sender, EventArgs e)
         {
-    
+
 
 
         }
-       
-        private void ExecuteCommand(string command )
+
+        private void ExecuteCommand(string command)
         {
-             
+
             string[] result = RunCommand(command).GetAwaiter().GetResult();
             foreach (var x in result)
-            Output.Text+=$"> {command}\n{x}\n";
+                Output.Text += $"> {command}\n{x}\n";
 
         }
 
@@ -102,10 +119,12 @@ namespace Redis_Viewer
             try
             {
                 var cmd = command.Split(" ")[0];
-                var arg = command.Replace(cmd + " ", "").Split(" ");
+                var arg = command.Replace(cmd + " ", "").Split(" ").ToList();
+                if (CommandBox.Text =="set") {
+                    arg.Add(InputBox.Text);
+                }
 
-
-              var result =  DataBase.Execute("get", arg, CommandFlags.PreferMaster).ToString();
+                var result = DataBase.Execute(CommandBox.Text, arg, CommandFlags.PreferMaster).ToString();
                 return [result];
             }
             catch (Exception ex)
@@ -114,5 +133,30 @@ namespace Redis_Viewer
             }
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            command = comboBox1.Text;
+            CommandBox.DataSource = (DataBase.KeyType(command).ToString() == "String") ? new List<string> { "get", "set" } : "";
+        }
+
+        private void btnGetValue_Click(object sender, EventArgs e)
+        {
+            var arg = command.Split(" ");
+            var outputText = DataBase.StringGet(arg[0], CommandFlags.DemandMaster).ToString();
+            //var outputText= RunCommand(command).GetAwaiter().GetResult();
+
+            Output.Text += $"> {command}\n{outputText}\n";
+
+        }
+
+        private void CommandBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void InputBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

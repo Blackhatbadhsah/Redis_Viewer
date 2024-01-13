@@ -37,6 +37,13 @@
             btnConnect = new Button();
             Output = new RichTextBox();
             Command = new TextBox();
+            comboBox1 = new ComboBox();
+            btnGetValue = new Button();
+            CommandBox = new ComboBox();
+            InputBox = new RichTextBox();
+            label4 = new Label();
+            label5 = new Label();
+            label6 = new Label();
             SuspendLayout();
             // 
             // label1
@@ -121,11 +128,82 @@
             Command.TextChanged += Command_TextChanged;
             Command.KeyDown += Command_KeyDown;
             // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(375, 114);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(270, 23);
+            comboBox1.TabIndex = 9;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
+            // btnGetValue
+            // 
+            btnGetValue.Location = new Point(667, 113);
+            btnGetValue.Name = "btnGetValue";
+            btnGetValue.Size = new Size(121, 23);
+            btnGetValue.TabIndex = 10;
+            btnGetValue.Text = "Execute";
+            btnGetValue.UseVisualStyleBackColor = true;
+            btnGetValue.Click += btnGetValue_Click;
+            // 
+            // CommandBox
+            // 
+            CommandBox.FormattingEnabled = true;
+            CommandBox.Location = new Point(101, 114);
+            CommandBox.Name = "CommandBox";
+            CommandBox.Size = new Size(218, 23);
+            CommandBox.TabIndex = 11;
+            CommandBox.SelectedIndexChanged += CommandBox_SelectedIndexChanged;
+            // 
+            // InputBox
+            // 
+            InputBox.Location = new Point(133, 48);
+            InputBox.Name = "InputBox";
+            InputBox.Size = new Size(655, 46);
+            InputBox.TabIndex = 12;
+            InputBox.Text = "";
+            InputBox.TextChanged += InputBox_TextChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(9, 58);
+            label4.Name = "label4";
+            label4.Size = new Size(38, 15);
+            label4.TabIndex = 13;
+            label4.Text = "label4";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(4, 113);
+            label5.Name = "label5";
+            label5.Size = new Size(91, 15);
+            label5.TabIndex = 14;
+            label5.Text = "Perform Action ";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(325, 113);
+            label6.Name = "label6";
+            label6.Size = new Size(45, 15);
+            label6.TabIndex = 15;
+            label6.Text = "On Key";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 618);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(label4);
+            Controls.Add(InputBox);
+            Controls.Add(CommandBox);
+            Controls.Add(btnGetValue);
+            Controls.Add(comboBox1);
             Controls.Add(Command);
             Controls.Add(Output);
             Controls.Add(btnConnect);
@@ -152,5 +230,12 @@
         private Button btnConnect;
         private RichTextBox Output;
         private TextBox Command;
+        private ComboBox comboBox1;
+        private Button btnGetValue;
+        private ComboBox CommandBox;
+        private RichTextBox InputBox;
+        private Label label4;
+        private Label label5;
+        private Label label6;
     }
 }
