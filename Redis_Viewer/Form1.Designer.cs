@@ -44,6 +44,7 @@
             label4 = new Label();
             label5 = new Label();
             label6 = new Label();
+            button1 = new Button();
             SuspendLayout();
             // 
             // label1
@@ -158,7 +159,7 @@
             // 
             // InputBox
             // 
-            InputBox.Location = new Point(133, 48);
+            InputBox.Location = new Point(65, 55);
             InputBox.Name = "InputBox";
             InputBox.Size = new Size(655, 46);
             InputBox.TabIndex = 12;
@@ -192,11 +193,23 @@
             label6.TabIndex = 15;
             label6.Text = "On Key";
             // 
+            // button1
+            // 
+            button1.Font = new Font("Segoe UI", 22F);
+            button1.Location = new Point(730, 52);
+            button1.Name = "button1";
+            button1.Size = new Size(58, 55);
+            button1.TabIndex = 16;
+            button1.Text = "⟳";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 618);
+            Controls.Add(button1);
             Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(label4);
@@ -237,5 +250,6 @@
         private Label label4;
         private Label label5;
         private Label label6;
+        private Button button1;
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.Xml;
 using static Hangfire.Storage.JobStorageFeatures;
@@ -120,11 +121,24 @@ namespace Redis_Viewer
             {
                 var cmd = command.Split(" ")[0];
                 var arg = command.Replace(cmd + " ", "").Split(" ").ToList();
-                if (CommandBox.Text =="set") {
-                    arg.Add(InputBox.Text);
+                var result = string.Empty;
+                switch (CommandBox.Text)
+                {
+                    case "get":
+                        result = DataBase.Execute(CommandBox.Text, arg, CommandFlags.PreferMaster).ToString();
+                        break;
+                    case "rpop":
+                        result = DataBase.ListRightPop(arg[0]);
+                        break;
+                    case "lpop":
+                        result = DataBase.ListLeftPop(arg[0]);
+                        break;
+                    default:
+                        result = "unexpected";
+                        break;
                 }
 
-                var result = DataBase.Execute(CommandBox.Text, arg, CommandFlags.PreferMaster).ToString();
+
                 return [result];
             }
             catch (Exception ex)
@@ -136,16 +150,35 @@ namespace Redis_Viewer
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             command = comboBox1.Text;
-            CommandBox.DataSource = (DataBase.KeyType(command).ToString() == "String") ? new List<string> { "get", "set" } : "";
+            CommandBox.DataSource = (DataBase.KeyType(command).ToString() == "String") ? new List<string> { "get" } : DataBase.KeyType(command).ToString() == "List" ? new List<string> { "Right Pop", "Left Pop" ,"Length"} : "";
         }
 
         private void btnGetValue_Click(object sender, EventArgs e)
         {
-            var arg = command.Split(" ");
-            var outputText = DataBase.StringGet(arg[0], CommandFlags.DemandMaster).ToString();
+            var cmd = command.Split(" ")[0];
+            var arg = command.Replace(cmd + " ", "").Split(" ").ToList();
+            var result = string.Empty;
+            switch (CommandBox.Text)
+            {
+                case "get":
+                    result = DataBase.Execute(CommandBox.Text, arg, CommandFlags.PreferMaster).ToString();
+                    break;
+                case "Right Pop":
+                    result = DataBase.ListRightPop(arg[0]);
+                    break;
+                case "Left Pop":
+                    result = DataBase.ListLeftPop(arg[0]);
+                    break;
+                case "Length":
+                    result = DataBase.ListLength(arg[0]).ToString();
+                    break;
+                default:
+                    result = "unexpected";
+                    break;
+            }
             //var outputText= RunCommand(command).GetAwaiter().GetResult();
 
-            Output.Text += $"> {command}\n{outputText}\n";
+            Output.Text += $"> {command}\n{result}\n";
 
         }
 
@@ -157,6 +190,11 @@ namespace Redis_Viewer
         private void InputBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Output.Text = "";
         }
     }
 }
